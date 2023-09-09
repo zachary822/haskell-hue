@@ -1,4 +1,4 @@
-# Revision history for dnssd-haskell
+# Revision history for hue
 
 ## 0.1.0.0 -- YYYY-mm-dd
 
