@@ -1,0 +1,42 @@
+# Compiled object files, static and dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# GHC artifacts
+*.hi
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+*.dump-*
+
+# Cabal build folder
+dist-newstyle/
+dist/
+
+# Cabal package related files
+*.cabal~
+cabal.project.local
+
+# Stack build folder
+.stack-work/
+
+# Stack package related files
+stack.yaml.lock
+
+# Executables (Linux, macOS, Windows)
+*.exe
+*.out
+
+# Miscellaneous
+*.swp
+*.swo
+*.swn
+*.bak
+*.bak
+.DS_Store
+
+# IDE and editor folders
+.idea/
+.vscode/
