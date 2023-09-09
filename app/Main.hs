@@ -4,7 +4,7 @@ module Main where
 
 import Configuration.Dotenv qualified as D
 import Data.Aeson
-import Data.ByteString.Lazy as LBS
+import Data.ByteString.Lazy qualified as LBS
 import Data.Default
 import Lib.HueBridge
 import Lib.HueBridge.Discovery

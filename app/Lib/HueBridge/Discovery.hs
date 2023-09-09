@@ -3,6 +3,7 @@
 module Lib.HueBridge.Discovery where
 
 import Control.Monad
+import Data.Char
 import Data.IORef
 import Foreign
 import Foreign.C.String
@@ -13,6 +14,7 @@ data DNSResolveReply = DNSResolveReply
   , fullname :: String
   , hosttarget :: String
   , port :: Int
+  , txt :: String
   }
   deriving (Eq, Show)
 
@@ -23,6 +25,13 @@ data Config = Config
 
 defaultConfig :: Config
 defaultConfig = Config{configInterfaceIndex = 0}
+
+parseTxt :: String -> [String]
+parseTxt [] = []
+parseTxt (x : xs) = entry : parseTxt rest
+ where
+  size = ord x
+  (entry, rest) = splitAt size xs
 
 type BrowseCallback = DNSServiceRef -> CUInt -> CUInt -> CInt -> CString -> CString -> CString -> Ptr () -> IO ()
 
@@ -56,14 +65,15 @@ browseCallbackFunc _ flags interfaceIndex errorCode serviceNameCString regTypeCS
     else fail $ show errorCode
 
 resolveCallbackFunc :: ResolveCallback
-resolveCallbackFunc _ _ interfaceIndex errorCode fullnameCString hosttargetCString port _ _ ctx = do
+resolveCallbackFunc _ _ interfaceIndex errorCode fullnameCString hosttargetCString port txtLen txtCString ctx = do
   ref <- deRefStablePtr $ castPtrToStablePtr ctx
 
   if errorCode == c_kDNSServiceErr_NoError
     then do
       fullname <- peekCString fullnameCString
       hosttarget <- peekCString hosttargetCString
-      modifyIORef ref (DNSResolveReply (fromIntegral interfaceIndex) fullname hosttarget (fromIntegral $ ntohs port) :)
+      txt <- peekCStringLen (txtCString, fromIntegral txtLen)
+      modifyIORef ref (DNSResolveReply (fromIntegral interfaceIndex) fullname hosttarget (fromIntegral $ ntohs port) txt :)
     else fail $ show errorCode
 
 discoverHueBridges :: Config -> IO [DNSResolveReply]
