@@ -75,7 +75,10 @@ executable hue
                       http-client,
                       http-client-tls,
                       crypton-connection,
-                      data-default
+                      data-default,
+                      text,
+                      aeson,
+                      bytestring
 
     -- Directories containing source files.
     hs-source-dirs:   app

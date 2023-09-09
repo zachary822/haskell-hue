@@ -3,7 +3,10 @@
 module Main where
 
 import Configuration.Dotenv qualified as D
+import Data.Aeson
+import Data.ByteString.Lazy as LBS
 import Data.Default
+import Lib.HueBridge
 import Lib.HueBridge.Discovery
 import Network.Connection
 import Network.HTTP.Client
@@ -23,6 +26,7 @@ main = do
 
   req <- parseRequest $ "https://" ++ hosttarget bridge ++ "/api/0/config"
 
-  response <- httpLbs req manager
+  (body :: BasicConfig) <- withResponse req manager $ \response ->
+    brConsume (responseBody response) >>= throwDecode . LBS.fromChunks
 
-  print $ responseBody response
+  print body
